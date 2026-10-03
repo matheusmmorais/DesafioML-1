@@ -1,0 +1,21 @@
+services:
+  # PADRÃO: `docker compose up --build`
+  # Captura 20 s no próprio container gerando tráfego de teste. Funciona em Windows, Mac e Linux.
+  demo:
+    build: .
+    image: traffic-analyzer
+    cap_add: [NET_RAW, NET_ADMIN]
+    command: ["--demo", "-i", "eth0", "-t", "20"]
+    volumes:
+      - ./data:/data
+
+  # OPCIONAL (somente Linux): captura a rede real da máquina.
+  # `docker compose run --rm live -i <interface> -t 30`   (veja interfaces com --list-interfaces)
+  live:
+    build: .
+    image: traffic-analyzer
+    profiles: ["live"]
+    network_mode: host
+    cap_add: [NET_RAW, NET_ADMIN]
+    volumes:
+      - ./data:/data
